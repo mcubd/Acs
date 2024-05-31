@@ -1,0 +1,89 @@
+
+package com.a.acs2;
+
+import android.content.Context;
+import android.media.browse.MediaBrowser;
+import android.net.Uri;
+import android.os.Bundle;
+import android.widget.Toast;
+
+import androidx.annotation.OptIn;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.util.UnstableApi;
+import androidx.media3.database.DatabaseProvider;
+import androidx.media3.database.StandaloneDatabaseProvider;
+import androidx.media3.datasource.DataSource;
+import androidx.media3.datasource.cache.Cache;
+import androidx.media3.datasource.cache.CacheDataSource;
+import androidx.media3.datasource.cache.NoOpCacheEvictor;
+import androidx.media3.datasource.cache.SimpleCache;
+import androidx.media3.exoplayer.ExoPlayer;
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory;
+import androidx.media3.exoplayer.source.ProgressiveMediaSource;
+import androidx.media3.ui.PlayerView;
+
+import java.io.File;
+
+
+@UnstableApi
+public class MainActivity extends AppCompatActivity {
+
+    PlayerView playerView;
+    ExoPlayer exoPlayer;
+    private static Cache downloadCache;
+    private static DatabaseProvider databaseProvider;
+    String url="https://flame.flameriser78.workers.dev/0:/mcubd/OTHERS/bng/1.mp4";
+
+
+    @OptIn(markerClass = UnstableApi.class)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        playerView = findViewById(R.id.vide);
+        exoPlayer = new ExoPlayer.Builder(this).build();
+        playerView.setPlayer(exoPlayer);
+
+        DataSource.Factory cacheDataSourceFactory = DemoUtil.getDataSourceFactory(this);
+
+        // Create MediaSource from the offline MediaItem
+        ProgressiveMediaSource mediaSource = new ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+                .createMediaSource(MediaItem.fromUri("https://flame.flameriser78.workers.dev/0:/mcubd/OTHERS/bng/2.mp4"));
+
+        exoPlayer.setMediaSource(mediaSource);
+        exoPlayer.prepare();
+        exoPlayer.setPlayWhenReady(true);
+        exoPlayer.play();
+        //----------------------------------------------
+
+/*        CacheDataSource.Factory cacheDataSourceFactory = DemoUtil.getDataSourceFactory(this);
+        playerView.setMediaSource(new ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(s));*/
+
+/*
+        exoPlayer.prepare();
+        exoPlayer.setPlayWhenReady(true);
+        exoPlayer.play();*/
+
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        exoPlayer.pause();
+    }
+    @Override
+    protected void onUserLeaveHint () {
+        super.onUserLeaveHint();
+        exoPlayer.pause();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        exoPlayer.play();
+    }
+
+
+
+}
+
